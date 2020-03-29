@@ -2,33 +2,29 @@
 namespace Hal\Report\Json;
 
 use Hal\Application\Config\Config;
-use Hal\Component\Output\Output;
 use Hal\Metric\Metrics;
+use Hal\Report\ReporterInterface;
+use RuntimeException;
 
-class Reporter
+/**
+ * This class takes care about the global report in JSON of consolidated metrics.
+ */
+class Reporter implements ReporterInterface
 {
-
-    /**
-     * @var Config
-     */
+    /** @var Config */
     private $config;
 
     /**
-     * @var Output
-     */
-    private $output;
-
-    /**
      * @param Config $config
-     * @param Output $output
      */
-    public function __construct(Config $config, Output $output)
+    public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->output = $output;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public function generate(Metrics $metrics)
     {
         if ($this->config->has('quiet')) {
@@ -39,8 +35,10 @@ class Reporter
         if (!$logFile) {
             return;
         }
-        if (!file_exists(dirname($logFile)) || !is_writable(dirname($logFile))) {
-            throw new \RuntimeException('You don\'t have permissions to write JSON report in ' . $logFile);
+
+        $logDir = dirname($logFile);
+        if (!file_exists($logDir) || !is_writable($logDir)) {
+            throw new RuntimeException('You do not have permissions to write JSON report in ' . $logFile);
         }
 
         file_put_contents($logFile, json_encode($metrics, JSON_PRETTY_PRINT));
