@@ -65,7 +65,7 @@ Use the `--config=<file>.json` option. For example:
             "binary": "git"           // if defined, runs git analyze
         },
         "junit": {
-            "file": "/tmp/junit.xml"  // if defined, JUnit report file will be analyzed            
+            "report": "/tmp/junit.xml"  // if defined, JUnit report file will be analyzed            
         }
     },
     "extensions": [ "php", "php8" ]   // default: ["php", "inc"]

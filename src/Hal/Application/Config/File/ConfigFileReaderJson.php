@@ -72,6 +72,13 @@ class ConfigFileReaderJson implements ConfigFileReaderInterface
             $config->set('git', $jsonData['plugins']['git']['binary']);
         }
 
+        // retrocompatibility with typo in documentation
+        // see https://github.com/phpmetrics/PhpMetrics/issues/441
+        // file -> report
+        if (isset($jsonData['plugins'], $jsonData['plugins']['junit'], $jsonData['plugins']['junit']["file"])) {
+            $jsonData['plugins']['junit']["report"] = $jsonData['plugins']['junit']["file"];
+        }
+
         if (isset($jsonData['plugins'], $jsonData['plugins']['junit'], $jsonData['plugins']['junit']["report"])) {
             $config->set('junit', $jsonData['plugins']['junit']["report"]);
         }
@@ -91,7 +98,7 @@ class ConfigFileReaderJson implements ConfigFileReaderInterface
     private function resolvePath($path)
     {
         if (DIRECTORY_SEPARATOR !== $path[0]) {
-             $path = dirname($this->filename) . DIRECTORY_SEPARATOR . $path;
+            $path = dirname($this->filename) . DIRECTORY_SEPARATOR . $path;
         }
 
         return $path;
